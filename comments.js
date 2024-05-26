@@ -1,47 +1,18 @@
 // create web server
-const express = require('express');
-const app = express();
-const port = 3000;
-const bodyParser = require('body-parser');
-const fs = require('fs');
+// create a web server that listens on port 3000 and returns the comment data when a request is made to the /comments URL.
 
-// use body-parser
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: true}));
+// Create a web server that listens on port 3000.
+// When a request is made to the /comments URL, return the comment data.
+// Use the comments variable provided.
 
-// get all comments
-app.get('/api/comments', (req, res) => {
-    fs.readFile('./comments.json', 'utf-8', (err, data) => {
-        if (err) {
-            res.status(500).send('Internal server error');
-        } else {
-            const comments = JSON.parse(data);
-            res.json(comments);
-        }
-    });
+const http = require('http');
+const comments = require('./comments');
+
+const server = http.createServer((req, res) => {
+  if (req.url === '/comments') {
+    res.write(JSON.stringify(comments));
+    res.end();
+  }
 });
 
-// add new comment
-app.post('/api/comments', (req, res) => {
-    const newComment = req.body;
-    fs.readFile('./comments.json', 'utf-8', (err, data) => {
-        if (err) {
-            res.status(500).send('Internal server error');
-        } else {
-            const comments = JSON.parse(data);
-            comments.push(newComment);
-            fs.writeFile('./comments.json', JSON.stringify(comments), (err) => {
-                if (err) {
-                    res.status(500).send('Internal server error');
-                } else {
-                    res.status(201).send('Comment added');
-                }
-            });
-        }
-    });
-});
-
-// start app
-app.listen(port, () => {
-    console.log(`Server is listening at http://localhost:${port}`);
-});
+server.listen(3000);
