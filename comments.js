@@ -1,56 +1,41 @@
 // create web server
-const http = require('http');
-const fs = require('fs');
-const url = require('url');
-const qs = require('querystring');
-const template = require('./lib/template.js');
+// http://localhost:3000
+// http://localhost:3000/comments
+// http://localhost:3000/comments/1
+// http://localhost:3000/comments/2
+// http://localhost:3000/comments/3
+// http://localhost:3000/comments/4
+// http://localhost:3000/comments/5
+// http://localhost:3000/comments/6
+// http://localhost:3000/comments/7
+// http://localhost:3000/comments/8
+// http://localhost:3000/comments/9
+// http://localhost:3000/comments/10
 
-const app = http.createServer(function(request, response) {
-    var _url = request.url;
-    var queryData = url.parse(_url, true).query;
-    var pathname = url.parse(_url, true).pathname;
-    console.log(pathname);
-    if (pathname === '/') {
-        if (queryData.id === undefined) {
-            fs.readdir('./data', function(error, filelist) {
-                var title = 'Welcome';
-                var description = 'Hello, Node.js';
-                var list = template.list(filelist);
-                var html = template.HTML(title, list,
-                    `<h2>${title}</h2>${description}`,
-                    `<a href="/create">create</a>`);
-                response.writeHead(200);
-                response.end(html);
-            })
-        } else {
-            fs.readdir('./data', function(error, filelist) {
-                fs.readFile(`data/${queryData.id}`, 'utf8', function(err, description) {
-                    var title = queryData.id;
-                    var list = template.list(filelist);
-                    var html = template.HTML(title, list,
-                        `<h2>${title}</h2>${description}`,
-                        `<a href="/create">create</a> 
-                        <a href="/update?id=${title}">update</a> 
-                        <form action="delete_process" method="POST">
-                            <input type="hidden" name="id" value="${title}">
-                            <input type="submit" value="delete">
-                        </form>`);
-                    response.writeHead(200);
-                    response.end(html);
-                });
-            });
-        }
-    } else if (pathname === '/create') {
-        fs.readdir('./data', function(error, filelist) {
-            var title = 'WEB - create';
-            var list = template.list(filelist);
-            var html = template.HTML(title, list, `
-                <form action="/create_process" method="POST">
-                    <p><input type="text" name="title" placeholder="title"></p>
-                    <p><textarea name="description" placeholder="description"></textarea></p>
-                    <p><input type="submit"></p>
-                </form>`, '');
-            response.writeHead(200);
-            response.end(html);
-        });
-    } else if (pathname === '/create_process')
+var http = require('http');
+var url = require('url');
+
+var comments = [
+  {name: 'John', comment: 'Hello'},
+  {name: 'Jane', comment: 'World'},
+  {name: 'Jim', comment: 'JavaScript'},
+  {name: 'Jack', comment: 'Node.js'},
+  {name: 'Jill', comment: 'Hello World'},
+  {name: 'Joe', comment: 'Hello JavaScript'},
+  {name: 'Jenny', comment: 'Hello Node.js'},
+  {name: 'Jerry', comment: 'Hello World'},
+  {name: 'Jesse', comment: 'Hello JavaScript'},
+  {name: 'Jasmine', comment: 'Hello Node.js'}
+];
+
+var server = http.createServer(function(request, response) {
+  var path = url.parse(request.url).pathname;
+  var index = parseInt(path.slice(9));
+  var comment = comments[index];
+
+  response.writeHead(200, {'Content-Type': 'application/json'});
+  response.end(JSON.stringify(comment));
+});
+
+server.listen(3000, 'localhost');
+console.log('Server running at http://localhost:3000/');
