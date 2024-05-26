@@ -1,6 +1,6 @@
-// create web server
+// Create web server
+// Create a file named comments.js with the following content:
 // create a web server that listens on port 3000 and returns the comment data when a request is made to the /comments URL.
-
 // Create a web server that listens on port 3000.
 // When a request is made to the /comments URL, return the comment data.
 // Use the comments variable provided.
